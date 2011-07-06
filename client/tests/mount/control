@@ -1,0 +1,12 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "mount"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+This zfs test script tests the basic functionality of zfs commands
+i.e. zfs mount and zfs unmount.
+'''
+job.run_test('mount')
