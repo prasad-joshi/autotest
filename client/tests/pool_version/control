@@ -1,0 +1,12 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "pool version"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+zpool set version can only increment pool version or upgrade the pool.
+It should not downgrade the pool version.
+'''
+job.run_test('pool_version')
