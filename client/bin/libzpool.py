@@ -39,7 +39,7 @@ def destroy(pool):
        utils.system("zpool destroy " + pool)
     return SUCCESS
 
-def add_disk(pool, disks):
+def add_disks(pool, disks):
     if pool == "":
        raise error.TestFail("cannot add disks : Missing pool name..")
     if disk == "":
