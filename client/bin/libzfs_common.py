@@ -10,3 +10,10 @@ def load_zfs_modules():
     else:
         logging.info(zfs_module + " module loaded successfully..")
     return SUCCESS
+
+def unload_zfs_modules():
+    if utils.unload_module("zfs") == False:
+        logging.info(zfs_module + " cannot unload module..")
+    else:
+        logging.info(zfs_module + " module unloaded successfully..")
+    return SUCCESS
