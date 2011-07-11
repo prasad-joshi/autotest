@@ -1,4 +1,4 @@
-import logging
+import logging, fsdev_disks
 from autotest_lib.client.bin import  utils, configzfs
 from autotest_lib.client.common_lib import error
 from configzfs import *
@@ -17,3 +17,11 @@ def unload_zfs_modules():
     else:
         logging.info("zfs module unloaded successfully..")
     return SUCCESS
+
+def get_free_disks():
+    disks = fsdev_disks.get_disk_list(get_all_disks=True)
+    free_disks = []
+    for i in disks:
+        if i['mountpt'] == None:
+            free_disks.append(i['device'])
+    return free_disks
