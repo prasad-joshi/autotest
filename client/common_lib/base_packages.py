@@ -5,13 +5,26 @@ upload and remove packages. Site specific extensions to any of these methods
 should inherit this class.
 """
 
-import re, os, sys, traceback, subprocess, shutil, time, traceback, urlparse
-import fcntl, logging
+import fcntl, logging, os, re, shutil
+from autotest_lib.client.bin import os_dep
 from autotest_lib.client.common_lib import error, utils, global_config
 
 
 # the name of the checksum file that stores the packages' checksums
 CHECKSUM_FILE = "packages.checksum"
+
+
+def has_pbzip2():
+    '''Check if parallel bzip2 is available on this system.'''
+    try:
+        os_dep.command('pbzip2')
+    except ValueError:
+        return False
+    return True
+
+
+# is parallel bzip2 available for use?
+_PBZIP2_AVAILABLE = has_pbzip2()
 
 
 def parse_ssh_path(repo):
@@ -60,13 +73,13 @@ def create_directory(repo):
 
 def check_diskspace(repo, min_free=None):
     # Note: 1 GB = 10**9 bytes (SI unit).
-    if not min_free:
+    if min_free is None:
         min_free = global_config.global_config.get_config_value('PACKAGES',
                                                           'minimum_free_space',
-                                                          type=int)
+                                                          type=int, default=1)
     try:
         df = repo_run_command(repo,
-                              'df -PB %d . | tail -1' % 10**9).stdout.split()
+                              'df -PB %d . | tail -1' % 10 ** 9).stdout.split()
         free_space_gb = int(df[3])
     except Exception, e:
         raise error.RepoUnknownError('Unknown Repo Error: %s' % e)
@@ -84,12 +97,13 @@ def check_write(repo):
         raise error.RepoWriteError('Unable to write to ' + repo)
 
 
-def trim_custom_directories(repo, older_than_days=40):
+def trim_custom_directories(repo, older_than_days=None):
     if not repo:
         return
-    older_than_days = global_config.global_config.get_config_value('PACKAGES',
-                                                      'custom_max_age',
-                                                      type=int)
+
+    if older_than_days is None:
+        older_than_days = global_config.global_config.get_config_value(
+            'PACKAGES', 'custom_max_age', type=int, default=40)
     cmd = 'find . -type f -atime +%s -exec rm -f {} \;' % older_than_days
     repo_run_command(repo, cmd, ignore_status=True)
 
@@ -295,7 +309,7 @@ class BasePackageManager(object):
         '''
         from autotest_lib.server import subcommand
         if not custom_repos:
-            # Not all package types necessairly require or allow custom repos
+            # Not all package types necessarily require or allow custom repos
             try:
                 custom_repos = global_config.global_config.get_config_value(
                     'PACKAGES', 'custom_upload_location').split(',')
@@ -311,8 +325,8 @@ class BasePackageManager(object):
             if not custom_repos:
                 return
 
-        results = subcommand.parallel_simple(trim_custom_directories,
-                                             custom_repos, log=False, )
+        subcommand.parallel_simple(trim_custom_directories, custom_repos,
+                                   log=False)
 
 
     def install_pkg(self, name, pkg_type, fetch_dir, install_dir,
@@ -386,7 +400,7 @@ class BasePackageManager(object):
     def fetch_pkg(self, pkg_name, dest_path, repo_url=None, use_checksum=False):
         '''
         Fetch the package into dest_dir from repo_url. By default repo_url
-        is None and the package is looked in all the repostories specified.
+        is None and the package is looked in all the repositories specified.
         Otherwise it fetches it from the specific repo_url.
         pkg_name     : name of the package (ex: test-sleeptest.tar.bz2,
                                             dep-gcc.tar.bz2, kernel.1-1.rpm)
@@ -652,7 +666,7 @@ class BasePackageManager(object):
                     # The packages checksum file does not exist locally.
                     # See if it is present in the repositories.
                     self.fetch_pkg(CHECKSUM_FILE, checksum_path)
-            except error.PackageFetchError, e:
+            except error.PackageFetchError:
                 # This should not happen whilst fetching a package..if a
                 # package is present in the repository, the corresponding
                 # checksum file should also be automatically present. This
@@ -688,7 +702,7 @@ class BasePackageManager(object):
         checksum_path = self._get_checksum_file_path()
         self._checksum_dict = checksum_dict.copy()
         checksum_contents = '\n'.join(checksum + ' ' + pkg_name
-                                      for pkg_name,checksum in
+                                      for pkg_name, checksum in
                                       checksum_dict.iteritems())
         # Write the checksum file back to disk
         self._run_command('echo "%s" > %s' % (checksum_contents,
@@ -759,10 +773,16 @@ class BasePackageManager(object):
         '''
         tarball_path = os.path.join(dest_dir, pkg_name)
         temp_path = tarball_path + '.tmp'
-        cmd = "tar -cvjf %s -C %s %s " % (temp_path, src_dir, exclude_string)
+        cmd_list = ['tar', '-cf', temp_path, '-C', src_dir]
+        if _PBZIP2_AVAILABLE:
+            cmd_list.append('--use-compress-prog=pbzip2')
+        else:
+            cmd_list.append('-j')
+        if exclude_string is not None:
+            cmd_list.append(exclude_string)
 
         try:
-            utils.system(cmd)
+            utils.system(' '.join(cmd_list))
         except:
             os.unlink(temp_path)
             raise
