@@ -64,3 +64,9 @@ def create_zvol(pool, size, zvol):
        raise error.TestFaile("zvol name not provided..")
     utils.system("zfs create -V " + size + " " + pool + "/" + zvol)
     return SUCCESS
+
+def dataset_exists(dataset):
+    if dataset == "":
+       raise error.TestFail("dataset name not provided..")
+    utils.system("zfs list -H -t filesystem,snapshot,volume " + dataset + " > /dev/null")
+    return SUCCESS
