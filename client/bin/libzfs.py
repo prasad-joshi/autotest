@@ -54,3 +54,13 @@ def set_compression(type, fs):
        raise error.TestFail("File system name may have been omitted..")
     utils.system("zfs set compression=" + type + " " + fs)
     return SUCCESS
+
+def create_zvol(pool, size, zvol):
+    if pool == "":
+       raise error.TestFail("pool is not provided..")
+    if size == "":
+       raise error.TestFaile("size is not provided..")
+    if zvol == "":
+       raise error.TestFaile("zvol name not provided..")
+    utils.system("zfs create -V " + size + " " + pool + "/" + zvol)
+    return SUCCESS
