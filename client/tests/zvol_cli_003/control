@@ -1,0 +1,12 @@
+AUTHOR = "Shrirang Phansalkar"
+NAME = "zvol_cli_003"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+This zfs test script will try ZFS volume sub-command
+without parameters to make sure it returns an error.
+'''
+job.run_test('zvol_cli_003')
