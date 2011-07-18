@@ -1,0 +1,13 @@
+AUTHOR = "Shrirang Phansalkar"
+NAME = "zvol_cli_002"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+This zfs test script create a zvol with 50
+letter name and checks whether zvol is created
+or not.
+'''
+job.run_test('zvol_cli_002')
