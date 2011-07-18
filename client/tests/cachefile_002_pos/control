@@ -1,0 +1,11 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "cachefile"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+Importing a pool with cachefile property and verifying it..
+'''
+job.run_test('cachefile_002_pos')
