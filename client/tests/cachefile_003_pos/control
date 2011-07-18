@@ -1,0 +1,11 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "cachefile"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+Verify set, export and destroy when cachefile is set on pool.
+'''
+job.run_test('cachefile_003_pos')
