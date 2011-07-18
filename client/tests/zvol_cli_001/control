@@ -1,0 +1,12 @@
+AUTHOR = "Shrirang Phansalkar"
+NAME = "zvol_cli_001"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+This zfs test script will execute well-formed
+'zfs list' commands which should return success.
+'''
+job.run_test('zvol_cli_001')
