@@ -1,0 +1,11 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "cachefile"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+Creating a pool with cachefile property and verifying the property..
+'''
+job.run_test('cachefile_001_pos')
