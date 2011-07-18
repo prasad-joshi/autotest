@@ -1,0 +1,11 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "cachefile"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+Setting altroot=<path> and cachefile=$CPATH for zpool create is succeed..
+'''
+job.run_test('cachefile_004_pos')
