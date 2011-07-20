@@ -5,6 +5,7 @@ TESTPOOL = "tank"
 TESTPOOL1 = "tank1"
 
 TESTFS = "zfs"
+TESTFS1 = "zfs1"
 
 TESTDIR = "/tank/zfs"
 
