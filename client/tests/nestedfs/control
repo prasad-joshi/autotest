@@ -1,0 +1,11 @@
+AUTHOR = "Rajshree Thorat"
+NAME = "nestedfs"
+TEST_CATEGORY = "unit"
+TEST_CLASS = "General"
+TEST_TYPE = "client"
+TIME = 'MEDIUM'
+EXPERIMENTAL = "True"
+DOC='''
+The parent file system cannot destroy if it has children..
+'''
+job.run_test('nestedfs')
