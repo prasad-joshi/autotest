@@ -58,3 +58,24 @@ def dataset_exists(dataset):
        raise error.TestFail("dataset name not provided..")
     utils.system("zfs list -H -t filesystem,snapshot,volume " + dataset + " > /dev/null")
     return SUCCESS
+
+def set_property(pool, fs, pr, val):
+    if pool == "":
+       raise error.TestFail("cannot set property : Missing pool name..")
+    if fs == "":
+       raise error.TestFail("cannot set property : Missing file system name..")
+    if pr == "":
+       raise error.TestFail("cannot set property : Missing property name..")
+    if val == "":
+       raise error.TestFail("cannot set property : Missing property value..")
+    utils.system("zfs set " + pr + "=" + val + " " + pool + "/" + fs)
+    return SUCCESS
+
+#type is on or off
+def set_compression(pool, fs, type):
+    if pool == "":
+       raise error.TestFail("cannot set compression property : Missing pool name..")
+    if fs == "":
+       raise error.TestFail("cannot set compression property : Missing file system name..")
+    set_property(pool, fs, "compression", type)
+    return SUCCESS
